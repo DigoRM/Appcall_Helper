@@ -170,12 +170,12 @@ with c4:
 	st.plotly_chart(Grafico_df_selection_Leads,use_container_width=True)
 
 
-situation_Reversals = st.sidebar.multiselect ("ESTORNO", options=df['Status_Estorno'].unique(),default=df['Status_Estorno'].unique())
-situation_Chargeback = st.sidebar.multiselect ("CHARGEBACK", options=df['Status_Chargeback'].unique(),default=df['Status_Chargeback'].unique())
+situation_Reversals = st.sidebar.multiselect ("ESTORNO", options=ranking_appcall['Status_Estorno'].unique(),default=ranking_appcall['Status_Estorno'].unique())
+situation_Chargeback = st.sidebar.multiselect ("CHARGEBACK", options=ranking_appcall['Status_Chargeback'].unique(),default=ranking_appcall['Status_Chargeback'].unique())
 
 
 
-df_selection_revolution = df.query("Squad == @squad & Status_Estorno == @situation_Reversals & Status_Chargeback == @situation_Chargeback" )
+df_selection_revolution = ranking_appcall.query("Squad == @squad & Status_Estorno == @situation_Reversals & Status_Chargeback == @situation_Chargeback" )
 
 df_selection_revolution 
 
