@@ -85,13 +85,13 @@ Estatisticas_Status_Appcall ['Média Leads'] = Estatisticas_Status_Appcall['Lead
 status_processamento =  st.sidebar.multiselect('Selecione o Status da Operação',options=ranking_appcall['Status_Processamento'].unique(),default=ranking_appcall['Status_Processamento'].unique())
 squad = st.sidebar.multiselect ("Selecione o Squad", options=ranking_appcall['Squad'].unique(),default=ranking_appcall['Squad'].unique())
 Ativo_Inativo = st.sidebar.multiselect ("Segmentação Appcall", options=ranking_appcall['Status_Appcall'].unique(),default=ranking_appcall['Status_Appcall'].unique())
-Situation_Reversals = st.sidebar.multiselect ("ESTORNO", options=ranking_appcall['Status_Estorno'].unique(),default=ranking_appcall['Status_Estorno'].unique())
-Situation_Chargeback = st.sidebar.multiselect ("CHARGEBACK", options=ranking_appcall['Status_Chargeback'].unique(),default=ranking_appcall['Status_Chargeback'].unique())
+# Situation_Reversals = st.sidebar.multiselect ("ESTORNO", options=ranking_appcall['Status_Estorno'].unique(),default=ranking_appcall['Status_Estorno'].unique())
+# Situation_Chargeback = st.sidebar.multiselect ("CHARGEBACK", options=ranking_appcall['Status_Chargeback'].unique(),default=ranking_appcall['Status_Chargeback'].unique())
 
 
 # Resultado da Query
 # st.header('Resultado do Filtro')
-df_selection_AppCall = ranking_appcall.query("Status_Processamento == @status_processamento & Status_Appcall == @Ativo_Inativo & Squad == @squad & Status_Estorno == @Situation_Reversals & Status_Chargeback == @Situation_Chargeback" )
+df_selection_AppCall = ranking_appcall.query("Status_Processamento == @status_processamento & Status_Appcall == @Ativo_Inativo & Squad == @squad" )
 st.header('Ranking AppCall')
 df_selection_AppCall = df_selection_AppCall.sort_values('Total Call Center',ascending=False)
 st.dataframe(df_selection_AppCall)
