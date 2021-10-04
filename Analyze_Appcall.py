@@ -95,7 +95,6 @@ df_selection_AppCall = ranking_appcall.query("Status_Processamento == @status_pr
 st.header('Ranking AppCall')
 df_selection_AppCall = df_selection_AppCall.sort_values('Total Call Center',ascending=False)
 st.dataframe(df_selection_AppCall)
-df_selection_AppCall
 st.write('Exporte documentos conforme o filtro escolhido:')
 def to_excel(dataframe):
 	    output = BytesIO()
