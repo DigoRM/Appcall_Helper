@@ -175,9 +175,6 @@ with c4:
 
 df_selection_Evolution = ranking_appcall.query("Status_Estorno == @situation_Reversals & Status_Chargeback == @situation_Chargeback" )
 df_selection_Evolution
-	
-
-
 
 
 
