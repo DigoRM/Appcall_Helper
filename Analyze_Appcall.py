@@ -69,25 +69,12 @@ ranking_appcall.loc[(ranking_appcall['Total_Aprovado'] == 0), 'Status_Processame
 ranking_appcall.loc[(ranking_appcall['Total_Aprovado'] > 0)&(ranking_appcall['Total_Aprovado'] <= input_prechurn), 'Status_Processamento'] = "Pre-CHURN"
 ranking_appcall.loc[(ranking_appcall['Total_Aprovado'] > input_prechurn), 'Status_Processamento'] = "Processando"
 
-# Estorno
-ranking_appcall ['Percentual_Estornos'] = (ranking_appcall['Pedidos Estornados']/ranking_appcall['Total_Aprovado'])*100
-ranking_appcall.loc[(ranking_appcall['Percentual_Estornos'] > input_Estorno), 'Status_Estorno'] = "Alerta"
-ranking_appcall.loc[(ranking_appcall['Percentual_Estornos'] <= input_Estorno), 'Status_Estorno'] = "aceitável"
-ranking_appcall.loc[(ranking_appcall['Percentual_Estornos'] > 50.0), 'Status_Estorno'] = "PREOCUPANTE"
-
-# Charageback
-ranking_appcall ['Percentual_Chargeback'] = (ranking_appcall['Pedidos Chargeback']/ranking_appcall['Total_Aprovado'])*100
-ranking_appcall.loc[(ranking_appcall['Percentual_Chargeback'] > input_Chargeback), 'Status_Chargeback'] = "Alerta"
-ranking_appcall.loc[(ranking_appcall['Percentual_Chargeback'] <= input_Chargeback), 'Status_Chargeback'] = "aceitável"
-ranking_appcall.loc[(ranking_appcall['Percentual_Chargeback'] > 20.0), 'Status_Chargeback'] = "PREOCUPANTE"
 
 
 # Filter in SideBar
 status_processamento =  st.sidebar.multiselect('Selecione o Status da Operação',options=ranking_appcall['Status_Processamento'].unique(),default=ranking_appcall['Status_Processamento'].unique())
 squad = st.sidebar.multiselect ("Selecione o Squad", options=ranking_appcall['Squad'].unique(),default=ranking_appcall['Squad'].unique())
 Ativo_Inativo = st.sidebar.multiselect ("Segmentação Appcall", options=ranking_appcall['Status_Appcall'].unique(),default=ranking_appcall['Status_Appcall'].unique())
-situation_reversal = st.sidebar.multiselect ("Status Estorno", options=ranking_appcall['Status_Estorno'].unique(),default=ranking_appcall['Status_Estorno'].unique())
-situation_chargeback = st.sidebar.multiselect ("Status Chargeback", options=ranking_appcall['Status_Chargeback'].unique(),default=ranking_appcall['Status_Chargeback'].unique())
 
 
 # Resultado da Query
