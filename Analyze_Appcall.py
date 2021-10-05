@@ -66,6 +66,7 @@ Estatisticas_Status_Appcall = Estatisticas_Status_Appcall.drop(columns=['Dimensi
 Estatisticas_Status_Appcall ['Média Leads'] = Estatisticas_Status_Appcall['Leads']/Estatisticas_Status_Appcall['Quantidade Sites']
 
 # Churn
+ranking_appcall
 ranking_appcall.loc[(ranking_appcall['Total_Aprovado'] == 0), 'Status_Processamento'] = "CHURN"
 ranking_appcall.loc[(ranking_appcall['Total_Aprovado'] > 0)&(ranking_appcall['Total_Aprovado'] <= input_prechurn), 'Status_Processamento'] = "Pre-CHURN"
 ranking_appcall.loc[(ranking_appcall['Total_Aprovado'] > input_prechurn), 'Status_Processamento'] = "Processando"
