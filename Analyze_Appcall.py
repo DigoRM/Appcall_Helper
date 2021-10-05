@@ -45,10 +45,9 @@ input_Estorno = st.number_input('Digite o percentual de estorno aceitável',min_
 input_Chargeback = st.number_input('Digite o percentual de chargeback aceitável',min_value=0.0,max_value=100.0,value=2.0,step=0.25)
 
 
+df = df.rename(columns = {'Total Aprovado': 'Total_Aprovado'}, inplace = False)
 
 ranking_appcall= df
-ranking_appcall = ranking_appcall.rename(columns = {'Total Aprovado': 'Total_Aprovado'}, inplace = False)
-
 # Segmentação por Contribuição do CallCenter no Faturamento do site
 
 ranking_appcall ['Dimensionamento_AppCall'] = ranking_appcall ['Total Call Center']/ranking_appcall ['Total_Aprovado']
@@ -67,21 +66,21 @@ Estatisticas_Status_Appcall = Estatisticas_Status_Appcall.drop(columns=['Dimensi
 Estatisticas_Status_Appcall ['Média Leads'] = Estatisticas_Status_Appcall['Leads']/Estatisticas_Status_Appcall['Quantidade Sites']
 
 # Churn
-ranking_appcall.loc[(df['Total_Aprovado'] == 0), 'Status_Processamento'] = "CHURN"
-ranking_appcall.loc[(df['Total_Aprovado'] > 0)&(df['Total_Aprovado'] <= input_prechurn), 'Status_Processamento'] = "Pre-CHURN"
-ranking_appcall.loc[(df['Total_Aprovado'] > input_prechurn), 'Status_Processamento'] = "Processando"
+ranking_appcall.loc[(ranking_appcall['Total_Aprovado'] == 0), 'Status_Processamento'] = "CHURN"
+ranking_appcall.loc[(ranking_appcall['Total_Aprovado'] > 0)&(ranking_appcall['Total_Aprovado'] <= input_prechurn), 'Status_Processamento'] = "Pre-CHURN"
+ranking_appcall.loc[(ranking_appcall['Total_Aprovado'] > input_prechurn), 'Status_Processamento'] = "Processando"
 
 # Estorno
 ranking_appcall ['Percentual_Estornos'] = (ranking_appcall['Pedidos Estornados']/ranking_appcall['Total_Aprovado'])*100
-ranking_appcall.loc[(df['Percentual_Estornos'] > input_Estorno), 'Status_Estorno'] = "Alerta"
-ranking_appcall.loc[(df['Percentual_Estornos'] <= input_Estorno), 'Status_Estorno'] = "aceitável"
-ranking_appcall.loc[(df['Percentual_Estornos'] > 50.0), 'Status_Estorno'] = "PREOCUPANTE"
+ranking_appcall.loc[(ranking_appcall['Percentual_Estornos'] > input_Estorno), 'Status_Estorno'] = "Alerta"
+ranking_appcall.loc[(ranking_appcall['Percentual_Estornos'] <= input_Estorno), 'Status_Estorno'] = "aceitável"
+ranking_appcall.loc[(ranking_appcall['Percentual_Estornos'] > 50.0), 'Status_Estorno'] = "PREOCUPANTE"
 
 # Charageback
 ranking_appcall ['Percentual_Chargeback'] = (ranking_appcall['Pedidos Chargeback']/ranking_appcall['Total_Aprovado'])*100
-ranking_appcall.loc[(df['Percentual_Chargeback'] > input_Chargeback), 'Status_Chargeback'] = "Alerta"
-ranking_appcall.loc[(df['Percentual_Chargeback'] <= input_Chargeback), 'Status_Chargeback'] = "aceitável"
-ranking_appcall.loc[(df['Percentual_Chargeback'] > 20.0), 'Status_Chargeback'] = "PREOCUPANTE"
+ranking_appcall.loc[(ranking_appcall['Percentual_Chargeback'] > input_Chargeback), 'Status_Chargeback'] = "Alerta"
+ranking_appcall.loc[(ranking_appcall['Percentual_Chargeback'] <= input_Chargeback), 'Status_Chargeback'] = "aceitável"
+ranking_appcall.loc[(ranking_appcall['Percentual_Chargeback'] > 20.0), 'Status_Chargeback'] = "PREOCUPANTE"
 
 ranking_appcall
 
@@ -176,6 +175,5 @@ with c4:
 
 df_selection_Evolution = ranking_appcall.query("Status_Estorno == @situation_Reversals & Status_Chargeback == @situation_Chargeback" )
 df_selection_Evolution
-
 
 
