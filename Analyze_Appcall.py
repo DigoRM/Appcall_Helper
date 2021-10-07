@@ -16,7 +16,7 @@ st.title('AppCall Performance')
 st.markdown('Esse é o arquivo que estou analisando:')
 
 # Sidebar
-st.sidebar.subheader("Settings")
+st.sidebar.subheader("Consolidado")
 # Setup file upload
 uploaded_file = st.sidebar.file_uploader(label="Upload CSV or Excel file here", type=['csv','xlsx'])
 
@@ -156,5 +156,206 @@ with c3:
 with c4:
 	Grafico_df_selection_Leads = px.pie(agrupa_df_selection_squad,values='Leads', names=agrupa_df_selection_squad.index, title='Leads por Squad')
 	st.plotly_chart(Grafico_df_selection_Leads,use_container_width=True)
+
+
+st.markdown('#')
+
+# Detalhamento operação do parceiro
+st.title('Análise de Pedidos do Parceiro')
+st.markdown('Esse é o arquivo que estou analisando:')
+
+# Sidebar
+st.sidebar.subheader("Parceiro")
+
+# Setup file upload
+uploaded_file2 = st.sidebar.file_uploader(label="Upload", type=['csv','xlsx'])
+
+global df2
+if uploaded_file2 is not None:
+
+	print(uploaded_file2)
+
+	try:
+		df2 = pd.read_csv(uploaded_file2)
+
+
+
+	except Exception as e:
+		print(e)
+		df2 = pd.read_excel(uploaded_file2,engine='openpyxl')
+
+
+try:
+	st.dataframe(data=df2,width=2000,height=150)
+except Exception as e:
+	print(e)
+
+# Filter in SideBar
+Filtro_origem =  st.sidebar.multiselect('Selecione a origem dos pedidos',options=df2['origem'].unique(),default=df2['origem'].unique())
+
+
+# Resultado da Query
+# st.header('Resultado do Filtro')
+df_selection_Origem = df2.query("origem == @Filtro_origem" )
+
+
+
+
+
+df_selection_Origem['Quantidade Pedidos'] = 1
+
+faturamento_total_df2 = df2['total_pedido'].sum()
+
+fatramento_total_selection = df_selection_Origem['total_pedido'].sum()
+
+total_pedidos = df_selection_Origem['Quantidade Pedidos'].sum()
+
+maior_pedido = df_selection_Origem['total_pedido'].max()
+
+menor_pedido = df_selection_Origem['total_pedido'].min()
+
+
+st.markdown('#')
+
+# Mapeando origem dos pedidos:
+
+st.subheader('Mapeando a origem dos Pedidos')
+origem_pedidos = df2.groupby('origem').sum()
+
+
+origem_pedidos ['Dimensionamento'] = (origem_pedidos ['total_pedido']/faturamento_total_df2)*100
+
+origem_pedidos
+
+# grafico ORIGEM
+st.markdown('#')
+grafico_origem_pedidos = px.pie(origem_pedidos,values='Dimensionamento', names=origem_pedidos.index, title='Composição dos Pedidos')
+st.plotly_chart(grafico_origem_pedidos,use_container_width=True)
+
+st.subheader('Estatísticas Gerais')
+
+st.markdown('#')
+
+C5, C6 = st.columns(2)
+with C5:
+	st.write(f'**Quantidade de pedidos analisados:** {total_pedidos}')
+	st.write(f'**Faturamento Total =** R$ {fatramento_total_selection}')
+with C6:
+	st.write(f'**Maior Venda =** R$ {maior_pedido}')
+	st.write(f'**Menor Venda =** R$ {menor_pedido}')
+
+st.markdown('#')
+
+
+# Mapeando produtos do parceiro
+st.subheader('Ranking Produtos mais vendidos')
+ranking_pedidos_produtos = df_selection_Origem.groupby('bundle').sum()
+
+ranking_pedidos_produtos = ranking_pedidos_produtos.sort_values('total_pedido',ascending=False)
+ranking_pedidos_produtos.drop(columns=['id_pedido'])
+ranking_pedidos_produtos
+
+st.write('Exporte documentos conforme o filtro escolhido:')
+def to_excel(dataframe1):
+	    output = BytesIO()
+	    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+	    dataframe1.to_excel(writer, sheet_name='Sheet1')
+	    writer.save()
+	    processed_data = output.getvalue()
+	    return processed_data
+
+def get_table_download_link(dataframe1):
+	    """Generates a link allowing the data in a given panda dataframe to be downloaded
+	    in:  dataframe
+	    out: href string
+	    """
+	    val = to_excel(dataframe1)
+	    b64 = base64.b64encode(val)  # val looks like b'...'
+	    return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="extract.xlsx">Download Lista de Produtos!</a>' # decode b'abc' => abc
+
+dataframe1 = ranking_pedidos_produtos # your dataframe
+st.markdown(get_table_download_link(dataframe1), unsafe_allow_html=True)
+st.markdown('#')
+
+
+# Detalhamento LEADS do parceiro
+
+st.title('LEADS do Parceiro')
+st.markdown('Esse é o arquivo que estou analisando:')
+
+# Sidebar
+st.sidebar.subheader("LEADS")
+
+# Setup file upload
+uploaded_file3 = st.sidebar.file_uploader(label="Leads", type=['csv','xlsx'])
+
+global df3
+if uploaded_file3 is not None:
+
+	print(uploaded_file3)
+
+	try:
+		df3 = pd.read_csv(uploaded_file2)
+
+
+
+	except Exception as e:
+		print(e)
+		df3 = pd.read_excel(uploaded_file3,engine='openpyxl')
+
+
+try:
+	st.dataframe(data=df3,width=2000,height=150)
+except Exception as e:
+	print(e)
+
+	st.markdown('#')
+	st.markdown('#')
+	st.markdown('#')
+
+
+Cx , Cy = st.columns(2)
+with Cx:
+	st.subheader('Ranking de Leads')
+
+
+	df3 ['Quantidade'] = 1
+
+	ranking_leads_abandonados = df3.groupby('Pacote de interesse').sum()
+	ranking_leads_abandonados = ranking_leads_abandonados.sort_values('Quantidade',ascending=False)
+	ranking_leads_abandonados = ranking_leads_abandonados.drop(columns=['Telefone','Número de documento'])
+	ranking_leads_abandonados
+
+	st.write('Exporte documentos conforme o filtro escolhido:')
+	def to_excel(dataframe2):
+			output = BytesIO()
+			writer = pd.ExcelWriter(output, engine='xlsxwriter')
+			dataframe2.to_excel(writer, sheet_name='Sheet1')
+			writer.save()
+			processed_data = output.getvalue()
+			return processed_data
+
+	def get_table_download_link(dataframe2):
+			"""Generates a link allowing the data in a given panda dataframe to be downloaded
+			in:  dataframe
+			out: href string
+			"""
+			val = to_excel(dataframe2)
+			b64 = base64.b64encode(val)  # val looks like b'...'
+			return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="extract.xlsx">Carrinhos Abandonados!</a>' # decode b'abc' => abc
+
+	dataframe2 = ranking_leads_abandonados # your dataframe
+	st.markdown(get_table_download_link(dataframe2), unsafe_allow_html=True)
+	st.markdown('#')
+
+
+with Cy:
+
+	st.subheader('Ranking Cliente Final')
+	# Ranking Cliente Final
+	ranking_leads_clientes = df3.groupby(['Email','Telefone']).sum()
+	ranking_leads_clientes = ranking_leads_clientes.sort_values('Quantidade',ascending=False)
+
+	ranking_leads_clientes
 
 
